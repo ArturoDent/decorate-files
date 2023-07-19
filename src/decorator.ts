@@ -30,8 +30,8 @@ export class FileDecorator {
     // if (this.badgesEnabled && settingsObject.badges && Object.values(settingsObject.badges).length > 0) 
     //   FileDecorator.readonlyBadge = Object.values(settingsObject.badges)[0];
 
-    if (this.badgesEnabled && settingsObject.badges && Object.values(settingsObject.badges).length > 1) 
-      FileDecorator.nonWorkSpaceFilesBadge = Object.values(settingsObject.badges)[1];
+    if (this.badgesEnabled && settingsObject.badges && Object.values(settingsObject.badges).length > 0) 
+      FileDecorator.nonWorkSpaceFilesBadge = Object.values(settingsObject.badges)[0];
   }
 
   // async refresh(): Promise<void> {
