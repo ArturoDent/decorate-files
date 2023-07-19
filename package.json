@@ -1,8 +1,8 @@
 {
  "name": "decorate-files-and-folders",
  "displayName": "Decorate Files",
- "description": "Decorate Files and FOlders with colors and badges",
- "version": "0.0.2",
+ "description": "Decorate Files and Folders with colors and badges",
+ "version": "0.0.3",
  "preview": true,
  "publisher": "ArturoDent",
  "license": "MIT",
@@ -41,33 +41,12 @@
    {
     "title": "Decorate Files and Folders",
     "id": "decorateFiles",
+    "order": 0,
     "properties": {
-     "decorateFiles.decorations.globalEnable": {
-      "markdownDescription": "Enable color and badge decorations on editor tabs and in the Explorer of specified files. The settings `#explorer.decorations.colors#` and `#explorer.decorations.badges#` must be set to `true` for each of the **Decorate Files** settings to take effect. Changing any of the `Decorate Files` settings requires a **reload** to take effect.",
+     "decorateFiles.decorations.apply": {
+      "markdownDescription": "Apply color and badge decorations on editor tabs and in the Explorer to the specified resources. These decorations will be applied top-down in the order listed below, with earlier decorations having priority.  Badges are independent of the other apply settings",
       "title": "Decorate Files: Decorations",
       "order": 0,
-      "type": "object",
-      "scope": "resource",
-      "properties": {
-       "enableColors": {
-        "type": "boolean",
-        "description": "Enable all color decorations."
-       },
-       "enableBadges": {
-        "type": "boolean",
-        "description": "Enable all badge decorations."
-       }
-      },
-      "additionalProperties": false,
-      "default": {
-       "enableColors": false,
-       "enableBadges": false
-      }
-     },
-     "decorateFiles.decorations.apply": {
-      "markdownDescription": "Apply color and badge decorations on editor tabs and in the Explorer to the specified resources. These decorations will be applied top-down in the order listed below, with earlier decorations having priority.",
-      "title": "Decorate Files: Decorations",
-      "order": 1,
       "type": "object",
       "scope": "resource",
       "properties": {
@@ -90,6 +69,10 @@
        "enableMultirootWorkspaces": {
         "type": "boolean",
         "description": "Decorate each folder of a multiroot workspace."
+       },
+       "enableBadges": {
+        "type": "boolean",
+        "description": "Apply badges."
        }
       },
       "additionalProperties": false,
@@ -98,12 +81,13 @@
        "enableNonWorkspaceFiles": false,
        "enableFilePaths": false,
        "enableFolders": false,
-       "enableMultirootWorkspaces": false
+       "enableMultirootWorkspaces": false,
+       "enableBadges": false
       }
      },
      "decorateFiles.filePaths": {
       "type": "object",
-      "order": 2,
+      "order": 1,
       "additionalProperties": {
        "type": "string"
       },
@@ -115,12 +99,8 @@
       "type": "object",
       "maxLength": 2,
       "scope": "resource",
-      "order": 3,
+      "order": 2,
       "properties": {
-       "read-only files": {
-        "type": "string",
-        "description": "Add a badge to read-only files."
-       },
        "non-workspace files": {
         "type": "string",
         "description": "Add a badge to non-Workspace files"
@@ -128,7 +108,6 @@
       },
       "additionalProperties": false,
       "default": {
-       "read-only files": "⏹",
        "non-workspace files": "NS"
       },
       "markdownDescription": "Can be 1-2 characters, including unicode characters (but not unicode, don't use `\\u23F9` for example, paste its character ⏹ instead). Leave the value empty for no badge.  The setting `#explorer.decorations.badges#` must be set to `true` for this setting to take effect."

@@ -1,4 +1,3 @@
-// import * as vscode from 'vscode';
 import { extensions, Uri, workspace, ThemeColor } from 'vscode';
 import * as path from 'path';
 
@@ -7,7 +6,7 @@ import * as path from 'path';
  * Get the full path to this extension  
  */
 export async function getPackageJSON(): Promise<object | undefined> {
-
+  
 	const extensionPath: string | undefined = extensions.getExtension('ArturoDent.decorate-files-and-folders')?.extensionPath;
   
   if (extensionPath) {
@@ -27,10 +26,8 @@ export async function makeColorThemeFromPath(pathKey: string): Promise<string> {
   if (pathKey.startsWith('.')) pathKey = `extension${pathKey}`;
   else if (pathKey.endsWith('/')) pathKey = `folderName.${pathKey.replaceAll('/', '')}`;
   else if (pathKey.endsWith('/**')) pathKey = `folderAndFiles.${pathKey.replaceAll('/**', '')}`;
-  // else if (pathKey.endsWith('/**')) pathKey = `folder.${pathKey.replaceAll('/**', '_++')}`;
   else pathKey = `path.${pathKey}`;
 
-  // return pathKey;
   return await _sanitizeColorThemeID(pathKey);
 };
 

@@ -1,14 +1,32 @@
 # Decorate Files and Folders
 
-This vscode extension will highlight the editor tab and Explorer fileName of various files.  The tab will be have a unique color which can be configured.  
+This vscode extension will highlight the editor tab and Explorer fileName of various files: designated paths, read-only and non-workspace files, and folder names.  
+
+Hovering over any decorated editor tab or Explorer folder.fileName will give the reason for the decoration, i.e., read-only, the file path used, non-workspace, etc.  
 
 The colors used are custom `ThemeColors`.  They are configurable.  In your `settings.json` add this `colorCustomiztion`:  
 
 ```jsonc
   "workbench.colorCustomizations": {
-    
     "decorateFiles.nonWorkspaceFiles": "#91ff00"  // a wonderful lime green, the default
   }
+```
+
+or
+
+```jsonc
+"workbench.colorCustomizations": {
+    "[someDarkTheme][anotherDarkTheme]": {
+        "decorateFiles.nonWorkspaceFiles": "#d5c88b",
+        "decorateFiles.readOnlyFiles": "##99afd8",
+        "decorateFiles.path.my_File": "#8cf58c",
+    },
+    "[someLightTheme]": {
+        "decorateFiles.nonWorkspaceFiles": "#ff0000",
+        "decorateFiles.readOnlyFiles": "##6189d2",
+        "decorateFiles.path.my_File": "#36b968",
+    }
+}
 ```
 
 Any hex color can be used including those with opacity like `#91ff0060`: the last two digits are for opacity.
@@ -21,7 +39,7 @@ Any hex color can be used including those with opacity like `#91ff0060`: the las
 
 * VS Code does not support all possible unicode blocks in a badge.  
 
-* VS Code does not provide a way for an extension to determine if the user set an editor to read-only (via the command `workbench.action.files.setActiveEditorReadonlyInSession` and related read-only commands).  So this extension can only decorate files as read-only that have been set via the OS.  
+* VS Code does not provide a way for an extension to determine if the user set an editor to read-only (via the command `workbench.action.files.setActiveEditorReadonlyInSession`).  So this extension can only color decorate files as read-only that have been set to read-only via the OS fileSystem (plus a reload). The read-only badges are built-in to vscode and not manipulated by this extension.  
 
 -----------  
 
@@ -65,15 +83,7 @@ This setting `Problems > Decorations: Enabled` will take precedence over the fil
 
 ## Contributed Settings  
 
-This extension contributes four settings:
-
-```plaintext
-Decorate Files > Decorations > Global Enable   (in the Settings UI), defaults are disabled/false
-  ✅  Enable all color decorations.  
-  ✅  Enable all badge decorations.  
-```
-
-The above is a global enable/disable for all color or badge decorations provided by this extension.  
+This extension contributes three settings:
 
 ```plaintext
 Decorate Files > Decorations > Apply   (in the Settings UI), defaults are disabled/false  
@@ -82,25 +92,25 @@ Decorate Files > Decorations > Apply   (in the Settings UI), defaults are disabl
   ✅  Decorate folders and fileNames containing some string.  
   ✅  Decorate each folder.  
   ✅  Decorate each folder of a multiroot workspace.  
+  ✅  Apply badges.  
 ```
 
-The above setting's defaults are disabled/false, so you will have to opt-in to enable decorating colors for these types of files.  
+The above setting's defaults are disabled/false, so you will have to opt-in to enable decorating colors and badges for these types of files.  
 
-* It is important to note that any file or folder might fall into more than one of the above categories.  For example, a file might be read-only AND contain some path that you designated to be decorated.  The decorators are applied in the above order in the setting and stop once there is a match.  So in the example just given, that file would be decorated as `read-only` and nothing else (assuming that the `read-only` option above is enabled).  
+* It is important to note that any file or folder might fall into more than one of the above categories.  For example, a file might be read-only AND contain some path that you designated to be decorated.  The decorators are applied in the above order in the setting and stop once there is a match.  So in the example just given, that file would be decorated as `read-only` and nothing else (assuming that the `read-only` option above is enabled).  Badges are applied regardless of the other color decoration settings.  
 
 ```plaintext
 Decorate Files > Decorations : Badges   (in the Settings UI)
-   read-only files  
    non-workspace files  
 ```
 
-There are default badges supplied by this extension for these two types of files.  These are currently the only files to which you can add a badge.
+There is a default badge supplied by this extension for non-workspace files.  But you can change that in the settings.  
 
 ```plaintext
 Decorate Files: File Paths  
 ```
 
-This setting takes any number of item/value pairs.  It can color decorate folders and files by their path.  More on this below.
+This setting takes any number of item/value pairs.  It can color decorate folders and files by their fileSystem path.  More on this below.
 
 ----------------  
 
@@ -143,9 +153,8 @@ The setting `Decorate Files: Badges` can take 1-2 characters as a `badge`, which
 
 ```jsonc
  "decorateFiles.badges": {
-    "non-workspace files": "NS",
-    // "read-only files": "⏹⏹", // or the below
-    "read-only files": "\u23F9\u23F9",
+    "non-workspace files": "\u23F9\u23F9",
+    // "non-workspace files": "⏹⏹", // or the above
   }
   ```
 
@@ -155,7 +164,7 @@ The setting `Decorate Files: Badges` can take 1-2 characters as a `badge`, which
 
 ## CHANGE the Colors
 
-The colors you set in `Decorate Files: File Paths` and the built-in colors can be changed in the `settings.json` `colorCustomization` setting.  Upon typing `decorateFiles` you should get intellisense suggestions for all available ThemeColors.  
+The colors you set in `Decorate Files: File Paths` and the built-in colors can be changed in the `settings.json` `colorCustomization` setting.  Upon typing `decorateFiles` you should get intellisense suggestions for all available ThemeColors.  Changes to these `ThemeColors` in the `colorCustomization` setting will take effect immediately upon saving the settings file.  
 
 Here are the extension's built-in ThemeColors which you can change:  
 
@@ -165,6 +174,10 @@ Here are the extension's built-in ThemeColors which you can change:
 | non-workspacefiles    | decorateFiles.nonWorkspaceFiles  |  |
 | folder names          | decorateFiles.folderColors       |  |
 | multiroot workspaces  | decorateFiles.workspaceFolderOdd |decorateFiles.workspaceFolderEven |
+
+In multiroot workspaces, the 1st/3rd/5th/etc. root folders (and their descendants) will be colored according to the `decorateFiles.workspaceFolderOdd` setting.  And the 2nd/4th/6th/etc. root folders (and their descendants) will be colored according to the `decorateFiles.workspaceFolderEven` setting.  
+
+---------
 
 And here are examples of ThemeColors created by this extension for entries from the `File Paths` setting:  
 
@@ -197,4 +210,4 @@ Look for these patterns in the `colorCustomization` setting.
 
 ## Release Notes
 
-* 0.0.1 Initial preview release.  
+* 0.0.3 Simplified settings.  

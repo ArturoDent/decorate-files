@@ -5,7 +5,6 @@ import * as fs from 'fs';
 
 
 
-
 /**
  * Write the settings colors to package.json,
  *
@@ -18,63 +17,20 @@ export async function loadColors(settings: DecoratorSettings, context: vscode.Ex
 
 	if (packageJSON?.contributes) packageColors = packageJSON?.contributes?.colors;
 
-  // const builtins = _makeColorsFromBuiltinPackageColors();
-  
 	const settingsColors: ThemeColor[] = await _makePackageColorsFromSettings(settings);
   if (!_colorArraysAreEquivalent(settingsColors, packageColors)) {
-
-    // below is incorrect; s/b built-in colors concat settingsColors
-		// packageJSON.contributes.colors = packageColors.concat(settingsColors);
 
     const builtins = getColorsFromBuiltinPackageColors();
 
 		packageJSON.contributes.colors = builtins.concat(settingsColors);
 
-    // const encoder = new vscode.TextEncoder();
+    // const encoder = new vscode.TextEncoder(); 
     // const data = encoder.encode(JSON.stringify(packageJSON));
 
 		// await vscode.workspace.fs.writeFile(vscode.Uri.joinPath(vscode.Uri.file(context.extensionPath), 'package.json'), Uint8Array.from(JSON.stringify(packageJSON, null, 1)));
 		fs.writeFileSync(vscode.Uri.joinPath(vscode.Uri.file(context.extensionPath), 'package.json').fsPath, JSON.stringify(packageJSON, null, 1));
 	}
 }
-
-/**
- * Transform the built-in commands into package.json-style colors
- * @returns {Array<import("vscode").Colors>} - package.json form of builtin 'contributes.colors'
- */
-// async function _makeColorsFromBuiltinPackageColors()  {
-
-// 	let builtins = [	{
-// 			"command": "find-and-transform.searchInFile",
-// 			"title": "Search in this File",
-// 			"category": "Find-Transform"
-// 		},
-// 		{
-// 			"command": "find-and-transform.searchInFolder",
-// 			"title": "Search in this Folder",
-// 			"category": "Find-Transform"
-// 		},
-// 		{
-// 			"command": "find-and-transform.searchInResults",
-// 			"title": "Search in the Results Files",
-// 			"category": "Find-Transform"
-// 		}
-// 	];
-
-// 	let builtinCommandsArray = [];
-
-// 	for (const builtin: vscode.ThemeColor of builtins) {
-
-// 		let newColor: vscode.ThemeColor = {
-//       id = builtin.id;
-//       description = builtin.description;
-//       defaults = builtin.defaults;
-//     }
-
-// 		builtinCommandsArray.push(newColor);
-// 	};
-// 	return builtinCommandsArray;
-// };
 
 
 // @returns { Array < vscode.Color > | Array; } - package.json form of 'contributes.colors'
@@ -93,8 +49,6 @@ async function _makePackageColorsFromSettings(settings: DecoratorSettings): Prom
   //   }
   // }
 
-  // check if any settingsColors not in package.json already TODO
-
   let settingsColorThemes: ThemeColor[] = [];
 
   if (settings.filePaths) {
@@ -102,14 +56,6 @@ async function _makePackageColorsFromSettings(settings: DecoratorSettings): Prom
     for (let [path, color] of Object.entries(settings?.filePaths)) {
 
       path = await utilities.makeColorThemeFromPath(path);
-
-      // if (path.startsWith('.')) path = `extension${path}`;
-      // else if (path.endsWith('/')) path = `folder.${path.replaceAll('/', '')}`;
-      // // else if (path.endsWith('/**')) path = `folder.${path.replaceAll('/**', '_')}`;
-      // else if (path.endsWith('/**')) path = `folder.${path.replaceAll('/**', '_++')}`;
-      // else path = `path.${path}`;
-
-      // path = await utilities.sanitizeColorThemeID(path);
 
       let newColor: ThemeColor = {
 

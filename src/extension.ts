@@ -6,14 +6,12 @@ import * as utilities from './utilities';
 import * as fs from 'fs';
 
 export interface DecoratorSettings {
-  colorsEnabled: boolean,
-  badgesEnabled: boolean,
-  badge: string,
   readonlyEnabled: boolean,
   nonWorkspaceFilesEnabled: boolean,
   multirootEnabled: boolean,
   foldersEnabled: boolean,
   filePathsEnabled: boolean,
+  badgesEnabled: boolean,
   filePaths: object | undefined,
   badges: object | undefined
 };
@@ -35,8 +33,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const settingsObject: DecoratorSettings = await settings.getAllSettingsObject();
   await _loadSettingsAsColors(context);
-
-  if (settingsObject.colorsEnabled || settingsObject.badgesEnabled) {
+if (Object.values(settingsObject).some(setting => typeof setting === 'boolean' && setting )) {
     decClass = new FileDecorator(settingsObject);
     context.subscriptions.push(vscode.window.registerFileDecorationProvider(decClass));
   } 
