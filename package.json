@@ -2,7 +2,7 @@
  "name": "decorate-files-and-folders",
  "displayName": "Decorate Files",
  "description": "Decorate Files and Folders with colors and badges",
- "version": "0.0.4",
+ "version": "0.1.0",
  "preview": true,
  "publisher": "ArturoDent",
  "license": "MIT",
