@@ -13,7 +13,7 @@ export interface DecoratorSettings {
   filePathsEnabled: boolean,
   badgesEnabled: boolean,
   filePaths: object | undefined,
-  badges: object | undefined
+  badges: object | undefined,
 };
 
 export interface ThemeColor {

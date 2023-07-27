@@ -4,10 +4,9 @@ import { DecoratorSettings } from './extension';
 
 export async function getAllSettingsObject(): Promise<DecoratorSettings> {
   
-  let applyTo: vscode.WorkspaceConfiguration | undefined = await vscode.workspace.getConfiguration().get('decorateFiles.decorations.apply');
+  const applyTo: vscode.WorkspaceConfiguration | undefined = await vscode.workspace.getConfiguration().get('decorateFiles.decorations.apply');
   let filePaths: vscode.WorkspaceConfiguration | undefined = await vscode.workspace.getConfiguration().get('decorateFiles.filePaths');
   let badges: vscode.WorkspaceConfiguration | undefined = await vscode.workspace.getConfiguration().get('decorateFiles.badges');
-
 
   return {
     readonlyEnabled: applyTo?.enableReadonly,
@@ -17,6 +16,6 @@ export async function getAllSettingsObject(): Promise<DecoratorSettings> {
     foldersEnabled: applyTo?.enableFolders,
     badgesEnabled: applyTo?.enableBadges,
     filePaths,
-    badges
+    badges,
   };
 }

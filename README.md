@@ -39,7 +39,7 @@ Any hex color can be used including those with opacity like `#91ff0060`: the las
 
 * VS Code does not support all possible unicode blocks in a badge.  
 
-* VS Code does not provide a way for an extension to determine if the user set an editor to read-only (via the command `workbench.action.files.setActiveEditorReadonlyInSession`).  So this extension can only color decorate files as read-only that have been set to read-only via the OS fileSystem (plus a reload). The read-only badges are built-in to vscode and not manipulated by this extension.  
+* VS Code does not provide a way for an extension to determine if the user set an editor to read-only (via the command `workbench.action.files.setActiveEditorReadonlyInSession`).  So this extension can only color decorate files as read-only that have been set to read-only via the OS fileSystem (plus a reload). The read-only badges are built-in to vscode and not manipulated by this extension.   And you must enable: `Files: Readonly From Permissions`.  
 
 -----------  
 
@@ -89,19 +89,31 @@ This extension contributes three settings:
 Decorate Files > Decorations > Apply   (in the Settings UI), defaults are disabled/false  
   ✅  Decorate read-only files.  
   ✅  Decorate non-workspace files.  
-  ✅  Decorate folders and fileNames containing some string.  
-  ✅  Decorate each folder.  
+  ✅  Decorate folders and fileNames containing some string. 
   ✅  Decorate each folder of a multiroot workspace.  
+  ✅  Decorate each folder.  
+ 
   ✅  Apply badges.  
 ```
 
 The above setting's defaults are disabled/false, so you will have to opt-in to enable decorating colors and badges for these types of files.  
 
+For the read-only setting to work you must have this built-in setting enabled:
+  
+```plaintext
+Files: Readonly From Permissions
+
+// Marks files as readonly when their file permissions indicate as such. 
+// This can be overridden via `files.readonlyInclude` and `files.readonlyExclude` settings.
+
+"files.readonlyFromPermissions": true,   // the default is false  
+```
+
 * It is important to note that any file or folder might fall into more than one of the above categories.  For example, a file might be read-only AND contain some path that you designated to be decorated.  The decorators are applied in the above order in the setting and stop once there is a match.  So in the example just given, that file would be decorated as `read-only` and nothing else (assuming that the `read-only` option above is enabled).  Badges are applied regardless of the other color decoration settings.  
 
 ```plaintext
 Decorate Files > Decorations : Badges   (in the Settings UI)
-   non-workspace files  
+   non-workspace files       \\ default is ⏹⏹
 ```
 
 There is a default badge supplied by this extension for non-workspace files.  But you can change that in the settings.  
@@ -144,6 +156,24 @@ Here are some examples:
 * Note that at present you should use the forward slash `/` as the path separator (that will be relaxed later).  
 
 The values must be valid css-like hex colors, so `#123`, `#1234`, `#123456`, and `#12345678` all work.  That is: 3, 4, 6 or 8 `[a-fA-F0-9]` all work.  If you attempt to provide an invalid hex number you will get an error notification and the setting will not be accepted.  
+
+--------------  
+
+## Multi-root Folders  
+
+If you have a multi-root workspace you can decorate (give a color to) the individual root folders and their descendants.  First, enable the  
+
+```json
+  ✅  Decorate each folder of a multiroot workspace.  
+  ``````
+  
+  setting from above.  Then there are three `ThemeColors` that can be set in your `colorCustomizations`:
+  
+  ```json
+  "decorateFiles.workspaceFolder.1"  // the 1st root folder
+  "decorateFiles.workspaceFolder.2"  // the 2nd root folder
+  "decorateFiles.workspaceFolder.3"  // the 3rd root folder
+  ```
 
 --------------  
 

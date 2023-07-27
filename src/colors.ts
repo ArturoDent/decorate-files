@@ -80,15 +80,16 @@ async function _makePackageColorsFromSettings(settings: DecoratorSettings): Prom
  */
 function _colorArraysAreEquivalent(settingsColors: ThemeColor[], packageColors: ThemeColor[]): boolean {
 
-	// subtract 5 for builtin colors
+	// subtract 6 for builtin colors
   if (settingsColors.length !== (packageColors.length-5)) return false;
 
   const builtinIds = [
     "decorateFiles.readOnlyFiles",
     "decorateFiles.nonWorkspaceFiles",
     "decorateFiles.folderColors",
-    "decorateFiles.workspaceFolderOdd",
-    "decorateFiles.workspaceFolderEven"
+    "decorateFiles.workspaceFolder.1",
+    "decorateFiles.workspaceFolder.2",
+    "decorateFiles.workspaceFolder.3"
   ];
 
   return settingsColors.every(sColor => packageColors.some((pColor: ThemeColor) => {
@@ -132,7 +133,7 @@ export function getColorsFromBuiltinPackageColors() {
       }
      },
      {
-      "id": "decorateFiles.workspaceFolderOdd",
+      "id": "decorateFiles.workspaceFolder.1",
       "description": "Color for the 2nd/4th/6th/etc. root folders.",
       "defaults": {
        "dark": "#f00",
@@ -142,13 +143,23 @@ export function getColorsFromBuiltinPackageColors() {
       }
      },
      {
-      "id": "decorateFiles.workspaceFolderEven",
+      "id": "decorateFiles.workspaceFolder.2",
       "description": "Color for the 1st/3rd/5th/etc. root folders.",
       "defaults": {
        "dark": "#00f",
        "light": "#00f",
        "highContrast": "#00f",
        "highContrastLight": "#00f"
+      }
+     },
+     {
+      "id": "decorateFiles.workspaceFolder.3",
+      "description": "Color for the 1st/3rd/5th/etc. root folders.",
+      "defaults": {
+       "dark": "#00ff37",
+       "light": "#00ff37",
+       "highContrast": "#00ff37",
+       "highContrastLight": "#00ff37"
       }
      }
   ];

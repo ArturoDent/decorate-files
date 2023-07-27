@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import * as path from 'path';
 
 import { DecoratorSettings } from './extension';
 import * as utilities from './utilities';
@@ -30,8 +31,18 @@ export class FileDecorator {
     // if (this.badgesEnabled && settingsObject.badges && Object.values(settingsObject.badges).length > 0) 
     //   FileDecorator.readonlyBadge = Object.values(settingsObject.badges)[0];
 
-    if (this.badgesEnabled && settingsObject.badges && Object.values(settingsObject.badges).length > 0) 
-      FileDecorator.nonWorkSpaceFilesBadge = Object.values(settingsObject.badges)[0];
+    // if (this.badgesEnabled && settingsObject.badges && Object.values(settingsObject.badges).length > 0)
+      // FileDecorator.nonWorkSpaceFilesBadge = Object.values(settingsObject.badges)[0];
+
+    // needs noImplicitAny false
+    // if (this.badgesEnabled && settingsObject.badges && settingsObject.badges['non-workspace files']) 
+
+    if (this.badgesEnabled && 
+        settingsObject?.badges  && 
+        Object.hasOwn(settingsObject.badges, 'non-workspace files'))
+      // next line needs needs noImplicitAny false or cast as any, using the string as an index on a possible empty object
+      // FileDecorator.nonWorkSpaceFilesBadge = (settingsObject.badges as any)['non-workspace files'];  // this works to avoid a ts error
+      FileDecorator.nonWorkSpaceFilesBadge = (settingsObject.badges as any as vscode.WorkspaceConfiguration)['non-workspace files'];
   }
 
   // async refresh(): Promise<void> {
@@ -126,16 +137,22 @@ export class FileDecorator {
   // decorate all folders with a special color
   private async decorateFolders(uri: vscode.Uri): Promise<fileDecoration | undefined> {
 
-    const stat: vscode.FileStat = await vscode.workspace.fs.stat(uri);
+    // to decorate top-level folders only. what if no workspace?
+    // const wsFolder = vscode.workspace.getWorkspaceFolder(uri);
+    // const uriFolder = path.basename(path.dirname(uri.fsPath));
+    // if (wsFolder?.name === uriFolder) {
+      
+      const stat: vscode.FileStat = await vscode.workspace.fs.stat(uri);
 
-    if (stat.type === vscode.FileType.Directory) { // FileType.Directory = 2
-      return {
-        // badge: "",
-        color: new vscode.ThemeColor("decorateFiles.folderColors"),
-        propagate: false,
-        tooltip: "Decorate-Files: folders"
-      };
-    }
+      if (stat.type === vscode.FileType.Directory) { // FileType.Directory = 2
+        return {
+          // badge: "",
+          color: new vscode.ThemeColor("decorateFiles.folderColors"),
+          propagate: false,
+          tooltip: "Decorate-Files: folders"
+        };
+      }
+    // }
   }
   
   // decorate non-workSpace files (and folders?)
@@ -158,27 +175,35 @@ export class FileDecorator {
 
     let rootIndex:number = 0;
     const thisWSFolder = vscode.workspace.getWorkspaceFolder(uri);
+    
+     const wsFolders = vscode.workspace.workspaceFolders;
+     const numRoots = wsFolders?.length;
+     
+     // check num of workspaces saved in package.json
+     // check which rootfolders are saved, if want each separately
+     // do above elsewhere? Create decorateFiles.workspaceFolder.<rootName> or just decorateFiles.workspaceFolder.1, decorateFiles.workspaceFolder.2
 
     if (thisWSFolder?.index !== undefined)
-      rootIndex = thisWSFolder?.index  + 1;
+      rootIndex = thisWSFolder?.index  + 1; // since WorkspaceFolder.index is 0-based
     else return undefined;
 
-    if (rootIndex % 2 === 1) { // so rootFolder 0/2/4/etc.
+     // if (rootIndex % 2 === 1) { // so rootFolder 0/2/4/etc.
+    //  if (typeof ("decorateFiles.workspaceFolder." + rootIndex) === vscode.ThemeColor)
       return {
         // badge: "",
-        color: new vscode.ThemeColor("decorateFiles.workspaceFolderOdd"),
+        color: new vscode.ThemeColor("decorateFiles.workspaceFolder." + rootIndex),
         propagate: false,
         tooltip: "Root folder is odd-numbered root in a multi-root workspace."
       };
-    }
-    else  {  // will be root 1/3/5/etc.
-      return {
-        // badge: "",
-        color: new vscode.ThemeColor("decorateFiles.workspaceFolderEven"),
-        propagate: true,
-        tooltip: "Root folder is even-numbered root in a multi-root workspace."
-      };
-    }
+    // }
+    // else  {  // will be root 1/3/5/etc.
+    //   return {
+    //     // badge: "",
+    //     color: new vscode.ThemeColor("decorateFiles.workspaceFolder2"),
+    //     propagate: true,
+    //     tooltip: "Root folder is even-numbered root in a multi-root workspace."
+    //   };
+    // }
   }
 }
 

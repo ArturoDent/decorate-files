@@ -3,7 +3,7 @@ import * as path from 'path';
 
 
 /**
- * Get the full path to this extension  
+ * Get the package.json of this extension  
  */
 export async function getPackageJSON(): Promise<object | undefined> {
   

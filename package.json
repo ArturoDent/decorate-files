@@ -44,7 +44,7 @@
     "order": 0,
     "properties": {
      "decorateFiles.decorations.apply": {
-      "markdownDescription": "Apply color and badge decorations on editor tabs and in the Explorer to the specified resources. These decorations will be applied top-down in the order listed below, with earlier decorations having priority.  Badges are independent of the other apply settings",
+      "markdownDescription": "Apply color and badge decorations. These decorations will be applied top-down in the order listed below, with earlier decorations having priority.  Badges are independent of the other apply settings. For the read-only option, enable this setting: `#files.readonlyFromPermissions#`.",
       "title": "Decorate Files: Decorations",
       "order": 0,
       "type": "object",
@@ -62,13 +62,13 @@
         "type": "boolean",
         "description": "Decorate folders and fileNames containing some string."
        },
-       "enableFolders": {
-        "type": "boolean",
-        "description": "Decorate each folder."
-       },
        "enableMultirootWorkspaces": {
         "type": "boolean",
         "description": "Decorate each folder of a multiroot workspace."
+       },
+       "enableFolders": {
+        "type": "boolean",
+        "description": "Decorate each folder."
        },
        "enableBadges": {
         "type": "boolean",
@@ -80,8 +80,8 @@
        "enableReadonly": false,
        "enableNonWorkspaceFiles": false,
        "enableFilePaths": false,
-       "enableFolders": false,
        "enableMultirootWorkspaces": false,
+       "enableFolders": false,
        "enableBadges": false
       }
      },
@@ -99,7 +99,7 @@
       "type": "object",
       "maxLength": 2,
       "scope": "resource",
-      "order": 2,
+      "order": 3,
       "properties": {
        "non-workspace files": {
         "type": "string",
@@ -108,7 +108,7 @@
       },
       "additionalProperties": false,
       "default": {
-       "non-workspace files": "NS"
+       "non-workspace files": "⏹⏹"
       },
       "markdownDescription": "Can be 1-2 characters, including unicode characters (but not unicode, don't use `\\u23F9` for example, paste its character ⏹ instead). Leave the value empty for no badge.  The setting `#explorer.decorations.badges#` must be set to `true` for this setting to take effect."
      }
@@ -147,7 +147,7 @@
     }
    },
    {
-    "id": "decorateFiles.workspaceFolderOdd",
+    "id": "decorateFiles.workspaceFolder.1",
     "description": "Color for the 2nd/4th/6th/etc. root folders.",
     "defaults": {
      "dark": "#f00",
@@ -157,13 +157,23 @@
     }
    },
    {
-    "id": "decorateFiles.workspaceFolderEven",
+    "id": "decorateFiles.workspaceFolder.2",
     "description": "Color for the 1st/3rd/5th/etc. root folders.",
     "defaults": {
      "dark": "#00f",
      "light": "#00f",
      "highContrast": "#00f",
      "highContrastLight": "#00f"
+    }
+   },
+   {
+    "id": "decorateFiles.workspaceFolder.3",
+    "description": "Color for the 1st/3rd/5th/etc. root folders.",
+    "defaults": {
+     "dark": "#00ff37",
+     "light": "#00ff37",
+     "highContrast": "#00ff37",
+     "highContrastLight": "#00ff37"
     }
    }
   ]
