@@ -2,7 +2,7 @@
 
 This vscode extension will highlight the editor tab and Explorer fileName of various files: designated paths, read-only and non-workspace files, and folder names.  
 
-Hovering over any decorated editor tab or Explorer folder.fileName will give the reason for the decoration, i.e., read-only, the file path used, non-workspace, etc.  
+Hovering over any decorated editor tab or Explorer folder or fileName will give the reason for the decoration, i.e., read-only, the file path used, non-workspace, etc.  
 
 The colors used are custom `ThemeColors`.  They are configurable.  In your `settings.json` add this `colorCustomiztion`:  
 
@@ -221,7 +221,7 @@ Here are the extension's built-in ThemeColors which you can change:
 | folder names          | decorateFiles.folderColors       |  |
 | multiroot workspaces  | decorateFiles.workspaceFolderOdd |decorateFiles.workspaceFolderEven |
 
-In multiroot workspaces, the 1st/3rd/5th/etc. root folders (and their descendants) will be colored according to the `decorateFiles.workspaceFolderOdd` setting.  And the 2nd/4th/6th/etc. root folders (and their descendants) will be colored according to the `decorateFiles.workspaceFolderEven` setting.  
+In multiroot workspaces, the first three root folders (and their descendants) can be separately decorated.  
 
 ---------
 
@@ -244,11 +244,9 @@ And here are examples of ThemeColors created by this extension for entries from 
 
 Look for these patterns in the `colorCustomization` setting.  
 
-* `ThemeColors` can only contain <a-zA-Z0-9._> so anything else will be removed from the path to create the `ThemeColor`.  Obviously if your paths already include `__` that will create a problem translating to a `ThemeColor`.  
+* `ThemeColors` can only contain <a-zA-Z0-9._> so anything else will be removed from the path to create the `ThemeColor`.  Obviously if your paths already include `___` (2 or 3 underscores in a row) that will create a problem translating to a `ThemeColor`.  
   
-![Example settings](images/decorateFilesExample1.gif)
-
- &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; <img src="https://github.com/ArturoDent/decorate-files/blob/master/images/decorateFilesExample1.gif?raw=true" width="800" height="800" alt="example settings"/>  
+ &emsp;&emsp; <img src="https://github.com/ArturoDent/decorate-files/blob/main/images/decorateFilesExample1.gif?raw=true" width="1200" height="800" alt="example settings"/>  
 
 ---------------
 
@@ -261,4 +259,4 @@ Look for these patterns in the `colorCustomization` setting.
 
 ## Release Notes
 
-* 0.0.3 Simplified settings.  
+* 0.1.5 Made explicit ThemeColor descriptions.  Used 2 underscores for hyphens and 3 for path separators.  

@@ -1,9 +1,3 @@
 # Change Log
 
-All notable changes to the "decorate-files" extension will be documented in this file.
-
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+* 0.1.5 Made explicit ThemeColor descriptions.  Used 2 underscores for hyphens and 3 for path separators.  
