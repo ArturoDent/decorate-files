@@ -36,7 +36,7 @@ export async function makeColorThemeFromPath(pathKey: string): Promise<string> {
  */
 async function _sanitizeColorThemeID(pathKey: string): Promise<string> {
 
-  pathKey = pathKey.replaceAll(/[\/]/g, '__');
+  pathKey = pathKey.replaceAll(/[\/]/g, '___').replaceAll(/-/g, '__');
   return pathKey.replaceAll(/^a-zA-Z0-9./g, '');
 };
 
@@ -53,4 +53,48 @@ export function validateHexValue(value:string): boolean {
   if (!value.match(re)) return false;
 
   return true;
+}
+
+/**
+ * 
+ * @param path - 
+ */
+export function colorThemeType(path: string): string {
+  
+  // path.package
+  // folderAndFiles.select__a__range
+  // extension.md
+  // folderName.test
+
+  // path = "folderAndFiles.select__a__range"
+  // descriptionPath = "folderAndFiles.select-a-range"
+  // userInput = "select-a-range"
+  const descriptionPath = path.replaceAll(/___/g, '/').replaceAll(/__/g, '-');
+  const userInput = descriptionPath.replaceAll(/^.*?\./gm, '');  // gets rid of 'decorateFiles.'
+  
+  // const type = descriptionPath.startsWith("path");
+  
+  switch (true) {
+    
+    case descriptionPath.startsWith("folderAndFiles"):
+      return `Decorate this folder and its descendants: '${ userInput }'.`;
+      break;
+    
+    case descriptionPath.startsWith("path"):
+      return `Decorate folders or files with '${ userInput }' as part of the file path.`;
+      break;
+    
+    case descriptionPath.startsWith("folderName"):
+      return `Decorate this folder name: '${ userInput }'.`;
+      break;
+    
+    case descriptionPath.startsWith("extension"):
+      return `Decorate files with the '.${ userInput }' extension.`;
+      break;
+  
+    default:
+      break;
+  }
+  
+  return '';
 }

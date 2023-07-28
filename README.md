@@ -150,12 +150,28 @@ Here are some examples:
 | .c                | #f00       | all files with the `.c` extension will be red |
 | someFolderA/      | #0f0       | the folder name only will be green |
 | someFolderB/**    | #0f0       | the folder name and all its descendants will be green |
-| someFile          |#00f        | any file path containing `someFile` will be blue |
+| someFile          | #00f        | any file path containing `someFile` will be blue |
 |folderA/subFolder2/someFile.ts |  #f00 | that file in those folders will be red |
 
 * Note that at present you should use the forward slash `/` as the path separator (that will be relaxed later).  
 
 The values must be valid css-like hex colors, so `#123`, `#1234`, `#123456`, and `#12345678` all work.  That is: 3, 4, 6 or 8 `[a-fA-F0-9]` all work.  If you attempt to provide an invalid hex number you will get an error notification and the setting will not be accepted.  
+
+* File paths are decorated top-down as listed in the settings.  This means the top entry, like `.c` in the example above, has priority.  So that `someFile.c` would be colored red and not blue.  
+
+The priority/order of the file paths can be changed in the Settings UI but that is difficult.  I suggest going to the `decorateFiles.filePaths` settings in your `settings.json` to make such changes (you can make the color changes there too).  
+
+So you might have this `decorateFiles.filePaths` setting:  
+
+```jsonc
+  "decorateFiles.filePaths": {
+    "package": "#00f000",            // you can just reorder or edit these as you like
+    "select-a-range/**": "#99f",     // you will have to reload vscode if you do make a change
+    "command-alias/README.md": "#060",
+    ".md": "#f00",
+    "test/": "#f00"
+  }
+```
 
 --------------  
 
@@ -223,11 +239,16 @@ And here are examples of ThemeColors created by this extension for entries from 
 2. Any item that **ends** with a `/` will create a ThemeColor called `decorateFiles.folderName.<yourFolder>`.  
 3. Any item that **ends** with a `/**` will create a ThemeColor called `decorateFiles.folderAndFiles.<yourFolder>`.  
 4. Simple paths will create a ThemeColor called `decorateFiles.path.<yourPath>`.  
-5. For a path that include `/`'s, the slashes will be replaced by 2 underscores `__` - which indicates a path separator.  
+5. For a path that includes `/`'s, the slashes will be replaced by 3 underscores `___` - which indicates a path separator.  
+6. For a path that includes `-`'s, the hyphens will be replaced by 2 underscores `__`.  
 
 Look for these patterns in the `colorCustomization` setting.  
 
 * `ThemeColors` can only contain <a-zA-Z0-9._> so anything else will be removed from the path to create the `ThemeColor`.  Obviously if your paths already include `__` that will create a problem translating to a `ThemeColor`.  
+  
+![Example settings](images/decorateFilesExample1.gif)
+
+ &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; <img src="https://github.com/ArturoDent/decorate-files/blob/master/images/decorateFilesExample1.gif?raw=true" width="800" height="800" alt="example settings"/>  
 
 ---------------
 

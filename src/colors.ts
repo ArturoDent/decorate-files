@@ -56,11 +56,18 @@ async function _makePackageColorsFromSettings(settings: DecoratorSettings): Prom
     for (let [path, color] of Object.entries(settings?.filePaths)) {
 
       path = await utilities.makeColorThemeFromPath(path);
-
+      
+      let description = utilities.colorThemeType(path);
+      
+      // let descriptionPath = path.replaceAll(/___/g, '/').replaceAll(/__/g, '-');
+      // descriptionPath = descriptionPath.replaceAll(/^.*?\./gm, '');
+      
       let newColor: ThemeColor = {
 
         id: `decorateFiles.${ path }`,
-        description: `Decorate all files with '${ path }' as part of the file path.` ,
+        // description: `Decorate files with '${ path }' as part of the file path.` ,
+        // description: `Decorate folders or files with '${ descriptionPath }' as part of the file path.` ,
+        description,
         defaults: {
           dark: color,
           light: color,
@@ -104,7 +111,7 @@ export function getColorsFromBuiltinPackageColors() {
   return [
     {
       "id": "decorateFiles.folderColors",
-      "description": "Color for a non-workspace editor label",
+      "description": "Color for folder names in the Explorer.",
       "defaults": {
        "dark": "#00b7ff",
        "light": "#00b7ff",
@@ -114,7 +121,7 @@ export function getColorsFromBuiltinPackageColors() {
      },
      {
       "id": "decorateFiles.nonWorkspaceFiles",
-      "description": "Color for a non-workspace editor label",
+      "description": "Color for a non-workspace editor label.",
       "defaults": {
        "dark": "#ff00ee",
        "light": "#ff00ee",
@@ -124,7 +131,7 @@ export function getColorsFromBuiltinPackageColors() {
      },
      {
       "id": "decorateFiles.readOnlyFiles",
-      "description": "Color for a read-only editor label and Explorer fileName",
+      "description": "Color for a read-only editor label and Explorer fileName.",
       "defaults": {
        "dark": "#c99703",
        "light": "#c99703",
@@ -134,7 +141,7 @@ export function getColorsFromBuiltinPackageColors() {
      },
      {
       "id": "decorateFiles.workspaceFolder.1",
-      "description": "Color for the 2nd/4th/6th/etc. root folders.",
+      "description": "Color for the 1st root folder.",
       "defaults": {
        "dark": "#f00",
        "light": "#f00",
@@ -144,7 +151,7 @@ export function getColorsFromBuiltinPackageColors() {
      },
      {
       "id": "decorateFiles.workspaceFolder.2",
-      "description": "Color for the 1st/3rd/5th/etc. root folders.",
+      "description": "Color for the 2nd root folder.",
       "defaults": {
        "dark": "#00f",
        "light": "#00f",
@@ -154,7 +161,7 @@ export function getColorsFromBuiltinPackageColors() {
      },
      {
       "id": "decorateFiles.workspaceFolder.3",
-      "description": "Color for the 1st/3rd/5th/etc. root folders.",
+      "description": "Color for the 3rd root folder.",
       "defaults": {
        "dark": "#00ff37",
        "light": "#00ff37",
