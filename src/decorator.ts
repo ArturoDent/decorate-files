@@ -1,12 +1,13 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
 
 import { DecoratorSettings } from './extension';
 import * as utilities from './utilities';
 
 
-type fileDecoration = {
+type FileDecoration = {
   badge?: string,
   color: vscode.ThemeColor,
   propagate: boolean,
@@ -53,17 +54,50 @@ export class FileDecorator {
   /**
    * @memberof FileDecorationProvider
    **/
-  async provideFileDecoration(uri: vscode.Uri): Promise<fileDecoration | undefined> {
+  async provideFileDecoration(uri: vscode.Uri): Promise<FileDecoration | undefined> {
 
     // private _onDidChangeFileDecorations = new vscode.EventEmitter<vscode.Uri[]>();
     // readonly onDidChangeFileDecorations = this._onDidChangeFileDecorations.event;
 
     // ignore settings.json, keybindings.json, Keyboard Shortcuts and the Settings UI
     if (uri.scheme === 'vscode-userdata' || uri.scheme === 'vscode-settings') return;
-    let decoration: fileDecoration | undefined = undefined;
+    let decoration: FileDecoration | undefined = undefined;
+
+
+    // if (!decoration && this.settingsObj.parentFoldersEnabled) {
+
+    if (vscode.window.activeTextEditor) {
+      const currentUri = vscode.window.activeTextEditor.document.fileName;
+      let  parentFolders = currentUri?.split(path.sep);
+      const wsFolder = vscode.workspace.getWorkspaceFolder(uri);
+
+      const wsFolderIndex = parentFolders?.findIndex(folder => folder === wsFolder?.name);
+
+      parentFolders?.splice(0, wsFolderIndex);
+
+      const parentPaths = [];
+      
+      for (let i = 1; i < parentFolders?.length; i++) {
+        parentPaths.push(path.sep + parentFolders?.slice(0, i).join(path.sep));
+      }
+
+      console.log(parentPaths);
+      if (parentPaths.find(parentPath => uri.fsPath.endsWith(parentPath))) {
+        decoration = await this.decorateParentFolders(uri);
+      }
+    }
+
+      // split currentUri
+      // if uri === currentUri parent folders, then 
+      // decoration = await this.decorateParentFolders(uri);
+    // }
+    
+    // return decoration = await this.decorateParentFolders(uri);
+
+    
 
     // readonly decorations, since first this will have priority over subsequent decorators
-    if (this.settingsObj.readonlyEnabled) {
+    if (!decoration && this.settingsObj.readonlyEnabled) {
       decoration = await this.decorateReadonlyFiles(uri);
     }
 
@@ -104,7 +138,7 @@ export class FileDecorator {
   
 
     // decorate fileNames
-  private async decorateFilePaths(uri: vscode.Uri, pathKey: string): Promise<fileDecoration | undefined> {
+  private async decorateFilePaths(uri: vscode.Uri, pathKey: string): Promise<FileDecoration | undefined> {
     
     const path = await utilities.makeColorThemeFromPath(pathKey);
 
@@ -116,7 +150,7 @@ export class FileDecorator {
     };
   }
 
-  private async decorateReadonlyFiles(uri: vscode.Uri): Promise<fileDecoration | undefined> {
+  private async decorateReadonlyFiles(uri: vscode.Uri): Promise<FileDecoration | undefined> {
 
     const stats: fs.Stats = fs.statSync(uri.fsPath);
 
@@ -133,15 +167,54 @@ export class FileDecorator {
       };
     }
   }
+
+    // decorate all parent folders of a given file with that same special color
+  private async decorateParentFolders(uri: vscode.Uri): Promise<FileDecoration | undefined> {
+  // private async decorateParentFolders(uri: vscode.Uri): Promise<void> {
+
+    // to decorate top-level folders only. what if no workspace?
+    // const wsFolder = vscode.workspace.getWorkspaceFolder(uri);
+    // const uriFolder = path.basename(path.dirname(uri.fsPath));
+
+    // function getParentFolders(uri:vscode.Uri) {
+    //   const url = new URL(uri);
+    //   const pathParts = url.pathname.split('/').filter(Boolean);
+    //   const parentPaths = [];
+      
+    //   for (let i = 0; i < pathParts.length; i++) {
+    //       parentPaths.push('/' + pathParts.slice(0, i).join('/'));
+    //   }
+      
+    //   return parentPaths;
+    // }
+
+    
+    // const stat: vscode.FileStat = await vscode.workspace.fs.stat(uri);
+    const stat: vscode.FileStat = await vscode.workspace.fs.stat(uri);
+
+    if (stat.type === vscode.FileType.Directory) { // FileType.Directory = 2
+
+      // return await this.decorateFolders(uri);
+
+      return {
+        // badge: "",
+        color: new vscode.ThemeColor("decorateFiles.folderColors"),
+        propagate: false,
+        tooltip: "Decorate-Files: parent folders"
+      };
+    }
+  }
   
   // decorate all folders with a special color
-  private async decorateFolders(uri: vscode.Uri): Promise<fileDecoration | undefined> {
+  private async decorateFolders(uri: vscode.Uri): Promise<FileDecoration | undefined> {
 
     // to decorate top-level folders only. what if no workspace?
     // const wsFolder = vscode.workspace.getWorkspaceFolder(uri);
     // const uriFolder = path.basename(path.dirname(uri.fsPath));
     // if (wsFolder?.name === uriFolder) {
       
+    if (uri?.scheme === 'vscode-userdata' || uri?.scheme === 'vscode-settings') return;
+
       const stat: vscode.FileStat = await vscode.workspace.fs.stat(uri);
 
       if (stat.type === vscode.FileType.Directory) { // FileType.Directory = 2
@@ -152,11 +225,10 @@ export class FileDecorator {
           tooltip: "Decorate-Files: folders"
         };
       }
-    // }
   }
   
   // decorate non-workSpace files (and folders?)
-  private async decorateNonWorkspaceFiles(uri: vscode.Uri): Promise<fileDecoration | undefined> {
+  private async decorateNonWorkspaceFiles(uri: vscode.Uri): Promise<FileDecoration | undefined> {
 
     // returns undefined if the uri doesn't match any workspaceFolder
     const folder = vscode.workspace.getWorkspaceFolder(uri);
@@ -171,7 +243,7 @@ export class FileDecorator {
     }
 
    // decorate all folders with a special color
-   private async decorateMultirootResources(uri: vscode.Uri): Promise<fileDecoration | undefined> {
+   private async decorateMultirootResources(uri: vscode.Uri): Promise<FileDecoration | undefined> {
 
     let rootIndex:number = 0;
     const thisWSFolder = vscode.workspace.getWorkspaceFolder(uri);

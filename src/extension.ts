@@ -31,9 +31,11 @@ export async function activate(context: vscode.ExtensionContext) {
   
   let decClass: FileDecorator;
 
+  // TODO: make a separate FileDecorator class for currentEditor parent folders ??
+
   const settingsObject: DecoratorSettings = await settings.getAllSettingsObject();
   await _loadSettingsAsColors(context);
-if (Object.values(settingsObject).some(setting => typeof setting === 'boolean' && setting )) {
+  if (Object.values(settingsObject).some(setting => typeof setting === 'boolean' && setting )) {
     decClass = new FileDecorator(settingsObject);
     context.subscriptions.push(vscode.window.registerFileDecorationProvider(decClass));
   } 
@@ -75,6 +77,7 @@ if (Object.values(settingsObject).some(setting => typeof setting === 'boolean' &
         if (pathsSettings) {
           invalid = Object.values(pathsSettings).find(hexValue => !utilities.validateHexValue(hexValue));
         }
+
         if (invalid) 
           vscode.window
             .showErrorMessage(`This hex value '${invalid}' for the 'decorateFiles.filePaths' setting is invalid.`,
@@ -92,11 +95,11 @@ if (Object.values(settingsObject).some(setting => typeof setting === 'boolean' &
         // context.subscriptions.push(vscode.window.registerFileDecorationProvider(decClass));
 
         vscode.window
-        .showInformationMessage("Reload vscode to make the changes you made effective.",
-          ...['Reload vscode', 'Do not Reload'])   // two buttons
-        .then(selected => {
-          if (selected === 'Reload vscode') vscode.commands.executeCommand('workbench.action.reloadWindow');
-          else vscode.commands.executeCommand('leaveEditorMessage');
+          .showInformationMessage("Reload vscode to make the changes you made effective.",
+            ...['Reload vscode', 'Do not Reload'])   // two buttons
+          .then(selected => {
+            if (selected === 'Reload vscode') vscode.commands.executeCommand('workbench.action.reloadWindow');
+            else vscode.commands.executeCommand('leaveEditorMessage');
         });
       }
     }
